@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Page</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Page</h1>
+    </header>
+    <main>
+        <section id="stores">
+            <h2>Stores</h2>
+            <button onclick="showAddStoreForm()">Add Store</button>
+            <table id="stores-table">
+                <!-- Stores will be dynamically added here -->
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2022 Dr Pepper Admin Page</p>
+    </footer>
+    <div id="add-store-form" style="display: none;">
+        <h3>Add Store</h3>
+        <form onsubmit="addStore(event)">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <br>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+            <br>
+            <label for="flavors">Flavors:</label>
+            <input type="text" id="flavors" name="flavors" required>
+            <br>
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" required>
+            <br>
+            <label for="image">Image:</label>
+            <input type="text" id="image" name="image" required>
+            <br>
+            <input type="submit" value="Add Store">
+        </form>
+    </div>
+    <script>
+        function showAddStoreForm() {
+            // Display the add store form
+            document.getElementById("add-store-form").style.display = "block";
+        }
+
+        function addStore(event) {
+            // Prevent the form from submitting normally
+            event.preventDefault();
+
+            // Get the form data
+            const name = document.getElementById("name").value;
+            const address = document.getElementById("address").value;
+            const flavors = document.getElementById("flavors").value.split(",");
+            const description = document.getElementById("description").value;
+            const image = document.getElementById("image").value;
+
+            // Create a new store object
+            const newStore = {
+                name,
+                address,
+                flavors,
+                description,
+                image
+            };
+
+            // Fetch the existing stores from the JSON file
+            fetch("locations.json")
+                .then(response => response.json())
+                .then(stores => {
+                    // Add the new store to the stores array
+                    stores.push(newStore);
+
+                    // Write the updated stores array to the JSON file
+                    fetch("locations.json", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(stores)
+                    })
+                    .then(response => {
+                        // Hide the add store form
+                        document.getElementById("add-store-form").style.display = "none";
+
+                        // Clear the form fields
+                        document.getElementById("name").value = "";
+                        document.getElementById("address").value = "";
+                        document.getElementById("flavors").value = "";
+                        document.getElementById("description").value = "";
+                        document.getElementById("image").value = "";
+
+                        // Update the stores table
+                        updateStoresTable();
+                    });
+                });
+        }
+
+        function updateStoresTable() {
+            // Fetch the updated stores from the JSON file
+            fetch("locations.json")
+                .then(response => response.json())
+                .then(stores => {
+                    // Get the stores table element
+                    const storesTable = document.getElementById("stores-table");
+
+                    // Clear the stores table
+                    storesTable.innerHTML = "";
+
+                    // Add the updated stores to the stores table
+                    stores.forEach(store => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${store.name}</td>
+                            <td>${store.address}</td>
+                            <td>${store.flavors.join(", ")}</td>
+                            <td>${store.description}</td>
+                            <td><img src="${store.image}" alt="${store.name}"></td>
+                        `;
+                        storesTable.appendChild(row);
+                    });
+                });
+        }
+    </script>
+</body>
+</html>

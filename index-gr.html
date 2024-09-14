@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Βρές Dr Pepper κοντά σου</title>
+    <link rel="stylesheet" href="style.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1989871630490356"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>Βρές Dr Pepper κοντά σου</h1>
+        <p>Βάλε την τοποθεσεία σου και πάτα "αναζήτηση".</p>
+        <div class="translate-button">
+            <button onclick="translateToEnglish()">Translate to English</button>
+        </div>
+    </header>
+    
+    <main>
+        <section id="search">
+            <input type="text" id="location" placeholder="Enter your location">
+            <button id="search-button" onclick="searchStores()">Αναζήτηση</button>
+        </section>
+        <section id="results"></section>
+    </main>
+    <footer>
+        <p>Χρησιμοποιώντας την ιστοσελήδα μας, συμφωνείς στην <a href="privacy-gr.html">Πολιτική Απορρήτου</a> και στους <a href="terms-gr.html">Όρους Χρήσεις</a>.</p>
+        <p>Είσαι ιδιοκτητης επιχειρησης? Έχεις Dr Pepper? Στείλε μας στο support@batho.gr</p>
+        <p>&copy; 2024 Find Dr Pepper Near You. All rights reserved.</p>
+    </footer>
+    <div id="popup">
+        <h2>Καλώς όρισες στο Find Dr Pepper Near You</h2>
+        <p>Χρησιμοποιώντας αυτόν τον ιστότοπο, συμφωνείτε με την <a href="privacy-gr.html">Πολιτική Απορρήτου</a> και <a href="terms-gr.html">Όρους Χρήσεις</a>. Παρακαλούμε διαβάστε προσεκτικά αυτά τα έγγραφα πριν συνεχίσετε.</p>
+        <button onclick="acceptTerms()">Συμφωνώ</button>
+    </div>
+    <script>
+        function acceptTerms() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function searchStores() {
+            const query = document.getElementById("location").value.toLowerCase();
+            fetch('locations.json')
+                .then(response => response.json())
+                .then(data => {
+                    const results = data.filter(store => store.address.toLowerCase().includes(query));
+                    if (results.length === 0) {
+                        displayError("Δεν βρήκαμε κανένα μαγαζί εκεί.");
+                    } else {
+                        displayResults(results);
+                    }
+                });
+        }
+
+        function displayError(message) {
+            const resultsSection = document.getElementById("results");
+            resultsSection.innerHTML = `<p>${message}</p>`;
+        }
+
+        function displayResults(results) {
+    const resultsSection = document.getElementById("results");
+    resultsSection.innerHTML = "";
+    results.forEach(store => {
+        const storeElement = document.createElement("div");
+        storeElement.innerHTML = `
+            <h3>${store.name}</h3>
+            <p>${store.address}</p>
+            <button onclick="showStoreInfo('${store.name}')">Παραπάνω πληροφορίες</button>
+        `;
+        resultsSection.appendChild(storeElement);
+    });
+}
+
+
+function showStoreInfo(name) {
+    // Fetch store data from JSON file
+    fetch('locations.json')
+        .then(response => response.json())
+        .then(data => {
+            // Find store with matching name
+            const store = data.find(store => store.name === name);
+            if (store) {
+                // Create blur element
+                const blur = document.createElement("div");
+                blur.classList.add("blur");
+
+                // Create storetab element
+                const storetab = document.createElement("div");
+                storetab.classList.add("storetab");
+                storetab.innerHTML = `
+                    <div class="storetab-content">
+                        <span class="close" onclick="closeStoretab()">&times;</span>
+                        <img src="${store.image}" alt="${store.name}">
+                        <h2>${store.name}</h2>
+                        <p>${store.address}</p>
+                        <h3>Γεύσεις:</h3>
+                        <ul>
+                            ${store.flavors.map(flavor => `<li>${flavor}</li>`).join("")}
+                        </ul>
+                        <h3>Πληροφορίες:</h3>
+                        <p>${store.description}</p>
+                    </div>
+                `;
+
+                // Add storetab to blur element and blur element to page
+                blur.appendChild(storetab);
+                document.body.appendChild(blur);
+            } else {
+                // Store not found, display error message
+                alert('Δεν βρέθηκε το μαγαζί');
+            }
+        });
+}
+
+
+
+        function closeStoretab() {
+            // Remove blur element from page
+            const blur = document.querySelector("div.blur");
+            if (blur) {
+                document.body.removeChild(blur);
+            }
+        }
+
+        function translateToEnglish() {
+    window.location.href = "index.html";
+    }
+
+    </script>
+</body>
+</html>

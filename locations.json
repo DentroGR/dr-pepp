@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Executive Kiosk",
+    "address": "Έλλης 4, Νέα Πεντέλη 152 39",
+    "flavors": ["Original, Cherry"],
+    "description": "Kiosk",
+    "image": "imageskiosk/2.png"
+    },
+  {
+      "name": "Dr Pepper Store 1",
+      "address": "239 Λεωφ. Ελ. Βενιζέλου Παλαιό Φάληρο",
+      "flavors": ["Unknown"],
+      "description": "Kiosk",
+      "image": "imageskiosk/1.png"
+   },
+   {
+    "name": "Αργυριάδου Δημητρούλα",
+    "address": "Ελευθερίας 33, Πέραμα 188 63",
+    "flavors": ["Original, Cherry, Zero"],
+    "description": "Mini Market",
+    "image": "imageskiosk/vasilis.png"
+ },
+ {
+  "name": "Dr Pepper Store 2",
+  "address": "Τριών Ιεραρχών 99, Αθήνα 118 51",
+  "flavors": ["Original"],
+  "description": "Mini Market",
+  "image": "imageskiosk/vasilis.png"
+}
+]

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Find Dr Pepper Near You</title>
+    <link rel="stylesheet" href="style.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1989871630490356"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <h1>Find Dr Pepper Near You</h1>
+        <p>Enter your location or a specific store name to find Dr Pepper nearby.</p>
+        <div class="translate-button">
+            <button onclick="translateToGreek()">Μετάφραση σε Ελληνικά</button>
+        </div>
+    </header>
+    
+    <main>
+        <section id="search">
+            <input type="text" id="location" placeholder="Enter your location">
+            <button id="search-button" onclick="searchStores()">Search for Stores</button>
+        </section>
+        <section id="results"></section>
+    </main>
+    <footer>
+        <p>By using this website, you agree to our <a href="privacyp.html">Privacy Policy</a> and <a href="terms-of-use.html">Terms of Use</a>.</p>
+        <p>Are you a store Owner? Do you have Dr Pepper? Contact us at support@batho.gr</p>
+        <p>&copy; 2024 Find Dr Pepper Near You. All rights reserved.</p>
+    </footer>
+    <div id="popup">
+        <h2>Welcome to Find Dr Pepper Near You</h2>
+        <p>By using this website, you agree to our <a href="privacyp.html">Privacy Policy</a> and <a href="terms-of-use.html">Terms of Use</a>. Please review these documents carefully before continuing.</p>
+        <button onclick="acceptTerms()">I Agree</button>
+    </div>
+    <script>
+        function acceptTerms() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function searchStores() {
+            const query = document.getElementById("location").value.toLowerCase();
+            fetch('locations.json')
+                .then(response => response.json())
+                .then(data => {
+                    const results = data.filter(store => store.address.toLowerCase().includes(query));
+                    if (results.length === 0) {
+                        displayError("No stores found at that address.");
+                    } else {
+                        displayResults(results);
+                    }
+                });
+        }
+
+        function displayError(message) {
+            const resultsSection = document.getElementById("results");
+            resultsSection.innerHTML = `<p>${message}</p>`;
+        }
+
+        function displayResults(results) {
+    const resultsSection = document.getElementById("results");
+    resultsSection.innerHTML = "";
+    results.forEach(store => {
+        const storeElement = document.createElement("div");
+        storeElement.innerHTML = `
+            <h3>${store.name}</h3>
+            <p>${store.address}</p>
+            <button onclick="showStoreInfo('${store.name}')">More Info</button>
+        `;
+        resultsSection.appendChild(storeElement);
+    });
+}
+
+
+function showStoreInfo(name) {
+    // Fetch store data from JSON file
+    fetch('locations.json')
+        .then(response => response.json())
+        .then(data => {
+            // Find store with matching name
+            const store = data.find(store => store.name === name);
+            if (store) {
+                // Create blur element
+                const blur = document.createElement("div");
+                blur.classList.add("blur");
+
+                // Create storetab element
+                const storetab = document.createElement("div");
+                storetab.classList.add("storetab");
+                storetab.innerHTML = `
+                    <div class="storetab-content">
+                        <span class="close" onclick="closeStoretab()">&times;</span>
+                        <img src="${store.image}" alt="${store.name}">
+                        <h2>${store.name}</h2>
+                        <p>${store.address}</p>
+                        <h3>Flavors:</h3>
+                        <ul>
+                            ${store.flavors.map(flavor => `<li>${flavor}</li>`).join("")}
+                        </ul>
+                        <h3>Description:</h3>
+                        <p>${store.description}</p>
+                    </div>
+                `;
+
+                // Add storetab to blur element and blur element to page
+                blur.appendChild(storetab);
+                document.body.appendChild(blur);
+            } else {
+                // Store not found, display error message
+                alert('Store not found');
+            }
+        });
+}
+
+
+
+        function closeStoretab() {
+            // Remove blur element from page
+            const blur = document.querySelector("div.blur");
+            if (blur) {
+                document.body.removeChild(blur);
+            }
+        }
+
+        function translateToGreek() {
+    window.location.href = "index-gr.html";
+    }
+
+    </script>
+</body>
+</html>
